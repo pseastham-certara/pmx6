@@ -1,4 +1,3 @@
-#' @export
 #' Creates a new Rmarkdown html tab.
 #' 
 #' Make sure that Rmd chunk option results='asis' is present.
@@ -14,6 +13,7 @@
 #' @examples
 #' p <- ggplot(x, y, dat=somedata)
 #' new_tab(p, title="My Plot", header=3)
+#' @export
 new_tab <- function(item, title="Tab", header=2, numbered=F, subtabs=F, pills=F, table=F) {
   # create header hashtags
   HEAD = ""
