@@ -4,35 +4,24 @@
 \alias{new_tab}
 \title{Creates a new Rmarkdown html tab.}
 \usage{
-new_tab(
-  item,
-  title = "Tab",
-  header = 2,
-  numbered = F,
-  subtabs = F,
-  pills = F,
-  table = F
-)
+new_tab(title = "Tab", header = 2, nonumber = T, subtabs = F, pills = F)
 }
 \arguments{
-\item{item}{An object to add into a new Rmd tab}
-
 \item{title}{Tab title}
 
 \item{header}{An int indicating Rmd html header level (e.g. 3 means "###")}
-
-\item{numbered}{A boolean for whether tab should be numbered or not}
 
 \item{subtabs}{A boolean for whether tab has subtabs below it or not}
 
 \item{pills}{A boolean for whether tab should be pill-shaped or not}
 
-\item{table}{A boolean for whether \code{item} is a table object or not}
+\item{numbered}{A boolean for whether tab should be numbered or not}
 }
 \description{
 Make sure that Rmd chunk option results='asis' is present.
 }
 \examples{
 p <- ggplot(x, y, dat=somedata)
-new_tab(p, title="My Plot", header=3)
+new_tab(title="My Plot", header=3)
+print(p)
 }
