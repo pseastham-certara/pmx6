@@ -18,7 +18,7 @@ To install this dev branch, use the following code:
 
 ```
 library(devtools)
-devtools::install_github("pseastham-certara/pmx6", ref="dev)
+devtools::install_github("pseastham-certara/pmx6", ref="dev")
 library(pmx6)
 testfunc()
 ```
