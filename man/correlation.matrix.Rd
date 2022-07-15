@@ -12,6 +12,10 @@ correlation.matrix(df)
 \description{
 Creates a correlation matrix with covariates
 }
+\section{another section}{
+NA
+}
+
 \examples{
 dat <- df \%>\% dplyr::distinct(USUBJID, .keep_all=TRUE) \%>\% dplyr::select(AGE, BWT, BHT, BBMI, SEXF)
 p <- correlation.matrix(dat)
