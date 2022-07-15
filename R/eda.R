@@ -1,3 +1,6 @@
+#' @import ggplot2
+NULL
+
 #' @description Test Func
 #' @usage testfunc()
 #' @param param1 p1
@@ -25,9 +28,9 @@ peek <- function(df) {
       stop("This function requires package 'flextable'. Please install it and try again.", call.=F)
     }
 
-    dfx = df
+    dat = df
     tablefn <- getFromNamespace("flextable", "flextable")
-    summ <- sapply(dfx,class)
+    summ <- sapply(dat,class)
     summ <- stack(summ)
     summ <- summ[, c("ind", "values")]
     summ <- cbind(rownames(summ), summ)
@@ -56,29 +59,85 @@ stackbar <- function(df,
                      ylab = "Count",
                      fill.lab = "") {
 
-  dfx <- df
+  dat <- df
   gval <- rlang::sym(gval)
   sval <- rlang::sym(sval)
+  xlabb <- xlab
+  ylabb <- ylab
 
-  dfx.tmp <- dfx %>%
-    dplyr::group_by(!!gval, !!sval) %>%
+  if(!is.factor(dat[[gval]])){
+        dat[[gval]] = factor(dat[[gval]])
+  }
+  if(!is.factor(dat[[sval]])){
+    dat[[sval]] = factor(dat[[sval]])
+  }
+
+
+  dat.tmp <- dat %>%
+    dplyr::group_by(!!sval, !!gval) %>%
     dplyr::tally() %>%
     dplyr::ungroup() %>%
-    dplyr::arrange(dplyr::desc(COHORTN)) %>%
-    dplyr::group_by(TREATC) %>%
+    dplyr::arrange(dplyr::desc(!!sval)) %>%
+    dplyr::group_by(!!gval) %>%
     dplyr::mutate(pos = cumsum(n) - n/2)
 
-  pp = ggplot2::ggplot(data = data.pk.tmp, aes(x=as.factor(TREATC), y=n, fill=COHORTN)) +
+
+  pp <- ggplot(data = dat.tmp, aes(x=as.factor(!!gval), y=n, fill=!!sval)) +
     geom_bar(stat="identity", color = 'black')+
     geom_text(aes(y=pos, label=n),
               color="black", size=3.5) +
     scale_fill_brewer(palette="Set3") +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90))+
-    labs(fill = "Cohort")+xlab("Treatment")+ylab("Number of subjects")
+    labs(fill = fill.lab)+xlab(xlabb)+ylab(ylabb)
 
+  pp
 
 }
+
+
+#' Summary of BLQ data
+#' @description Graphical Summary of Data Below Limit of Quantitation
+#' @param df input data frame
+#' @param facet_on facet variable
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @return A \code{ggplot} object
+#' @section Required variables:
+#' \subsection{BLQ}{
+#'   Binary column equal to 1 for records below limit of quantitation, 0 otherwise
+#' }
+#' \subsection{EVID}{
+#'   Binary column equal to 1 for dosing records, 0 otherwise
+#' }
+#' \subsection{TIME}{
+#'   Time variable
+#' }
+#' @export
+blqhist <- function(df,
+                    facet_on=NULL,
+                    xlab="Time",
+                    ylab = "count"){
+  dat <- df
+  xlabb <- xlab
+  ylabb <- ylab
+
+
+  dat.blq <- dat %>% dplyr::filter(EVID==0, BLQ == 1)
+  dat.blq <- dat.blq %>%
+    dplyr::filter(EVID==0, TIME>0)
+
+  pp <- ggplot(dat.blq) +
+    geom_histogram(aes(x = TIME), fill='gray70', col='black', alpha=0.5, bins= 20)+
+    theme_bw() + xlab(xlabb) + ylab(ylabb)
+
+  if(!is.null(facet_on)){
+    pp <- pp + facet_wrap(as.formula(paste("~", facet_on)))
+  }
+
+  pp
+}
+
 
 
 #' modify plots to log scale (helper function - do not export)
@@ -147,6 +206,8 @@ lowerFn <- function(data, mapping, method = "lm", ...) {
 #' @section another section
 #' @export
 correlation.matrix <- function(df) {
+
+  dat <- df
   p <- GGally::ggpairs(dat,
                        lower = list(continuous = wrap(lowerFn, method = "lm")),
                        diag = list(continuous = wrap("barDiag", colour = "blue")),
