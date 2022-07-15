@@ -1,12 +1,12 @@
-#' @export
-#' @description This is a test function
-#' @usage testfunc()
-#' @param param1
-#' @param param2
-#' @details here be pirates
-#' @section another section
-#' @references reference1 (2022), reference2 (also 2022)
 testfunc <- function() {
+  #' @export
+  #' @description This is a test function
+  #' @usage testfunc()
+  #' @param param1
+  #' @param param2
+  #' @details here be pirates
+  #' @section another section
+  #' @references reference1 (2022), reference2 (also 2022)
   text <- paste("This is a test function in the pmx6 library.",
                 "It was created on April 22, 2022.",
                 sep="\n")
